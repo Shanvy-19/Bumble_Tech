@@ -72,7 +72,7 @@
     const transitions = (text.match(/\b(additionally|furthermore|moreover|in conclusion|it is important to note)\b/gi) || []).length;
     const punctuation = (text.match(/[!?]/g) || []).length;
     const repetition = words.length - new Set(words.map((word) => word.toLowerCase())).size;
-    const ai = clamp(43 + (average > 28 ? 11 : 0) + transitions * 3 + (repetition > words.length * .35 ? 8 : 0) - (punctuation > 3 ? 7 : 0), 12, 88);
+    const ai = clamp(Math.round(50 + (average - 18) * 0.9 + transitions * 4 + (repetition / words.length) * 55 - punctuation * 1.8), 8, 98);
     const human = 100 - ai;
     const signals = [
       average > 28 ? "Long, evenly shaped sentences" : "Mixed sentence pacing",
