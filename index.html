@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#16261f" />
+    <title>Bumble Tech — AI vs human detector</title>
+    <meta name="description" content="A transparent workspace for exploring whether text, documents, and video look AI-generated or human-created." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Bumble Tech home">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>Bumble <em>Tech</em></span>
+        </a>
+        <nav class="topnav" aria-label="Primary navigation">
+          <a href="#workspace">Workspace</a>
+          <a href="#how-it-works">How it works</a>
+        </nav>
+        <div class="topbar-actions">
+          <span class="status-dot"><i></i> Local demo mode</span>
+          <button class="icon-button" type="button" id="themeToggle" aria-label="Toggle contrast theme">◐</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" id="workspace">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="bee-dot">✦</span> A second set of eyes</p>
+            <h1>Let’s look a little<br /><span>closer.</span></h1>
+            <p class="hero-subtitle">Bumble Tech helps you pause, notice the small signals, and make a more thoughtful call about where content came from.</p>
+            <div class="hero-note"><span class="note-icon">!</span> No score knows the whole story. Keep your judgement in the room.</div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hive-orbit orbit-a"></div>
+            <div class="hive-orbit orbit-b"></div>
+            <div class="hex hex-main">✦</div>
+            <div class="hex hex-small hex-one"></div>
+            <div class="hex hex-small hex-two"></div>
+            <div class="hex hex-small hex-three"></div>
+            <span class="spark spark-one">✦</span><span class="spark spark-two">✦</span>
+          </div>
+        </section>
+
+        <section class="workspace-grid" aria-label="Detection workspace">
+          <div class="input-panel card">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">01 / Add a sample</p>
+                <h2>What are we looking at?</h2>
+              </div>
+              <span class="privacy-badge">⌁ stays in your browser</span>
+            </div>
+
+            <div class="mode-tabs" role="tablist" aria-label="Content type">
+              <button class="mode-tab active" data-mode="text" role="tab" aria-selected="true"><span>✎</span> Text</button>
+              <button class="mode-tab" data-mode="file" role="tab" aria-selected="false"><span>▧</span> Document</button>
+              <button class="mode-tab" data-mode="video" role="tab" aria-selected="false"><span>▷</span> Video</button>
+            </div>
+
+            <div class="mode-content" id="textMode">
+              <label for="textInput" class="sr-only">Paste or type content to analyze</label>
+              <textarea id="textInput" placeholder="Paste an essay, email, caption, or any other text here…" maxlength="20000"></textarea>
+              <div class="input-footer"><span id="charCount">0 / 20,000</span><span>Best with 100+ words</span></div>
+            </div>
+
+            <div class="mode-content hidden" id="fileMode">
+              <label class="dropzone" id="dropzone" for="fileInput">
+                <input id="fileInput" type="file" accept=".pdf,.doc,.docx,.txt,.md,image/*" />
+                <span class="upload-icon">↑</span>
+                <strong>Bring a document along</strong>
+                <span>PDF, DOCX, TXT, Markdown, or image · max 25 MB</span>
+                <button type="button" class="browse-button">Browse files</button>
+              </label>
+              <div class="file-result hidden" id="fileResult"></div>
+            </div>
+
+            <div class="mode-content hidden" id="videoMode">
+              <label class="dropzone video-dropzone" id="videoDropzone" for="videoInput">
+                <input id="videoInput" type="file" accept="video/*" />
+                <span class="upload-icon">▷</span>
+                <strong>Bring a video along</strong>
+                <span>MP4, WebM, MOV · samples one frame every 5 seconds</span>
+                <button type="button" class="browse-button">Browse video</button>
+              </label>
+              <div class="video-preview hidden" id="videoPreview">
+                <video id="videoElement" controls preload="metadata"></video>
+                <div class="video-meta"><span id="videoName"></span><span id="videoDuration"></span></div>
+              </div>
+            </div>
+
+            <div class="analyze-row">
+              <button class="primary-button" id="analyzeButton" type="button"><span>Analyze sample</span><b>→</b></button>
+              <span class="shortcut-hint">⌘ Enter</span>
+            </div>
+          </div>
+
+          <aside class="results-panel card" aria-live="polite">
+            <div class="panel-heading results-heading">
+              <div>
+                <p class="section-kicker">02 / Read the signals</p>
+                <h2 id="resultTitle">We’ll make sense of it together</h2>
+              </div>
+              <span class="result-status" id="resultStatus">Waiting</span>
+            </div>
+            <div class="empty-state" id="emptyState">
+              <div class="empty-orbit"><span>✦</span></div>
+              <p>Take your time.</p>
+              <span>Add something on the left and we’ll show you what stood out.</span>
+            </div>
+            <div class="result-content hidden" id="resultContent">
+              <div class="score-grid">
+                <div class="score-card human-score"><span>Human-likeness</span><strong id="humanScore">—</strong><div class="score-track"><i id="humanBar"></i></div></div>
+                <div class="score-card ai-score"><span>AI-likeness</span><strong id="aiScore">—</strong><div class="score-track"><i id="aiBar"></i></div></div>
+              </div>
+              <div class="signal-summary" id="signalSummary"></div>
+              <div class="timeline-wrap hidden" id="timelineWrap">
+                <div class="timeline-heading"><span>Video timeline</span><small>Suspicious segments are amber</small></div>
+                <div class="timeline" id="timeline"></div>
+                <div class="timeline-labels"><span>0:00</span><span id="timelineEnd">—</span></div>
+              </div>
+              <div class="uncertainty-note"><span>i</span><p><strong>Keep the context.</strong> Signals can be affected by editing, translation, short samples, and new generation tools. Confirm important decisions with provenance and human review.</p></div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="how-section" id="how-it-works">
+          <div><p class="section-kicker">03 / Made for real decisions</p><h2>Useful before you hit send.</h2><p class="audience-copy">For teachers reviewing a draft, editors checking a submission, and teams asking “does this sound like us?” Bumble Tech is a quick second look—not a courtroom.</p></div>
+          <div class="proof-grid">
+            <article class="example-card"><span class="how-number">A COMMON CHECK</span><h3>“This sounds too tidy.”</h3><p>Paste the paragraph. We’ll point to sentence rhythm, repeated phrasing, and formal transitions so you can decide what deserves a closer read.</p><div class="example-quote">“The result gave me a place to start a conversation, not a reason to accuse someone.”</div></article>
+          </div>
+        </section>
+      </main>
+      <footer><span>© 2026 Bumble Tech</span><span>Built for curious humans <span class="footer-bee">✦</span></span></footer>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
